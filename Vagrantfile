@@ -7,6 +7,7 @@ Vagrant::Config.run do |config|
   config.vm.provision :shell, :path => "provision.sh"
   config.ssh.forward_agent = true
   config.vm.forward_port 8000, 8000
+  config.vm.forward_port 4243, 4240
 
   config.vm.define :shipyard do |pm_config|
     pm_config.vm.host_name = "shipyard.local"
