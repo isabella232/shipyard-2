@@ -52,10 +52,11 @@ class ApplicationBuildForm(forms.Form):
       interpreter = forms.ChoiceField(choices=interpreters)
       version = forms.ChoiceField(choices=versions, label=None)
       application = forms.FileField('application')
+      git_url = forms.CharField()
       port = forms.CharField(initial=5000)
       launch = forms.CharField(initial="%s app.%s" % (interpreter_name, extension))
       after_launch = forms.CharField(initial="siege --concurrent 2 --delay 1 -f urls.txt", required = False)
-      configuration = forms.CharField(initial="%s db.%s" % (interpreter_name, extension), required=False)
+      before_launch = forms.CharField(initial="%s db.%s" % (interpreter_name, extension), required=False)
       hosts = forms.MultipleChoiceField(choices=[(x.id, x.name) for x in get_available_hosts()])
 
       def __init__(self, *args, **kwargs):
@@ -75,9 +76,10 @@ class ApplicationBuildForm(forms.Form):
                Field('interpreter',id="application_interpreter"),
                Field('version', id="application_version", label=""),
                'application',
+               'git_url',
                'port',
+               'before_launch',
                'launch',
                'after_launch',
-               'configuration',
                'hosts'
                )

@@ -1,4 +1,4 @@
-FROM docker.pdx.vm.datanerd.us/ubuntu
+FROM 127.0.0.1/ubuntu
 
 ADD . /install
 RUN chmod 755 /install/install.sh

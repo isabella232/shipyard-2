@@ -48,7 +48,8 @@ def build_application(interpreter
                      ,application_name
                      ,launch
                      ,after_launch
-                     ,configuration
+                     ,before_launch
+                     ,git_url
                      ,repository
                      ,client_url):
     """
@@ -59,10 +60,10 @@ def build_application(interpreter
        mkdir(application_folder, 0755)
 
     save_in('%s/buildapp.sh' % application_folder
-           ,render.application_install_script(interpreter, application_name, configuration))
+           ,render.application_install_script(interpreter, application_name, before_launch))
     save_in('%s/launch.sh' % application_folder
            ,render.application_launch_script(interpreter, launch, after_launch))
 
     tag = '%(os)s/%(interpreter)s%(version)s/%(application_name)s' % (locals())
-    Dockerfile = render.application_Dockerfile(interpreter, version, os, repository, application_name, port)
+    Dockerfile = render.application_Dockerfile(interpreter, version, os, repository, application_name, git_url, port)
     return build(client_url, repository, Dockerfile, application_folder, locals(), tag)

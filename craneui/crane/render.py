@@ -1,6 +1,8 @@
 from base import crane_path
 from os import path, mkdir
 from jinja2 import Environment, FileSystemLoader
+import hashlib
+import time
 
 """
 In this file are all the function use to render the crane templates:
@@ -27,15 +29,17 @@ def os_Dockerfile(os):
     """
     Render the Dockerfile that install an os in a container.
     """
+    build_hash = hashlib.sha256(str(time.time())).hexdigest()
     return render_template__(OS_TPL % os, **locals())
 
 def interpreter_Dockerfile(interpreter, version, os, repository):
     """
     Render the Dockerfile that install an interpreter version in a container.
     """
+    # FIXME: add a build hash in ENV
     return render_template__(INTERPRETER_TPL % (interpreter, interpreter), **locals())
 
-def application_Dockerfile(interpreter, version, os, repository, application_name, port = DEFAULT_PORT):
+def application_Dockerfile(interpreter, version, os, repository, application_name, git_url, port = DEFAULT_PORT):
     """
     Render the Dockerfile for the container
     """

@@ -1,7 +1,11 @@
 FROM {{repository}}/{{os}}/{{interpreter}}{{version}}
 
 ADD . /home/qa/website
+{% if git_url == 0 %}
 ADD {{application_name}}.tar.gz /home/qa/website
+{% else %}
+RUN cd /home/qa/website && git clone {{git_url}}
+{% endif %}
 
 RUN chmod 755 /home/qa/website/buildapp.sh
 RUN ls -l /home/qa/website

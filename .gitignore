@@ -10,3 +10,6 @@ newrelic.ini
 .vagrant*
 *.gz
 *.db
+
+TODO
+dump.rdb
