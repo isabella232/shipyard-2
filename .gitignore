@@ -12,4 +12,7 @@ newrelic.ini
 *.db
 
 TODO
+NOTES
 dump.rdb
+log
+craneui/crane/build/app/*
