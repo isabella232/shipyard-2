@@ -17,7 +17,7 @@ versions = list_versions(interpreter_name)
 
 class OsBuildForm(forms.Form):
       os = forms.ChoiceField(choices=oses)
-      hosts = forms.MultipleChoiceField(choices=[(x.id, x.name) for x in get_available_hosts()])
+      hosts = forms.MultipleChoiceField()
 
       def __init__(self, *args, **kwargs):
           super(OsBuildForm, self).__init__(*args, **kwargs)
@@ -26,12 +26,14 @@ class OsBuildForm(forms.Form):
           self.helper.form_class = 'form-horizontal' # FIXME : horizontal?
           self.helper.form_action = reverse('craneui.views.build_os')
           self.helper.help_text_inline = True
+          self.fields['hosts'].choices = \
+            [(x.id, x.name) for x in get_available_hosts()]
 
 class InterpreterBuildForm(forms.Form):
       os = forms.ChoiceField(choices=oses)
       interpreter = forms.ChoiceField(choices=interpreters)
       version = forms.ChoiceField(choices=versions)
-      hosts = forms.MultipleChoiceField(choices=[(x.id, x.name) for x in get_available_hosts()])
+      hosts = forms.MultipleChoiceField()
 
       def __init__(self, *args, **kwargs):
           super(InterpreterBuildForm, self).__init__(*args, **kwargs)
@@ -40,6 +42,9 @@ class InterpreterBuildForm(forms.Form):
           self.helper.form_class = 'form-horizontal' # FIXME : horizontal?
           self.helper.form_action = reverse('craneui.views.build_interpreter')
           self.helper.help_text_inline = True
+          self.fields['hosts'].choices = \
+            [(x.id, x.name) for x in get_available_hosts()]
+
           # FIXME : inline interpreter/version
           self.helper.layout = Layout(
                'os',
@@ -57,7 +62,7 @@ class ApplicationBuildForm(forms.Form):
       launch = forms.CharField(initial="%s app.%s" % (interpreter_name, extension))
       after_launch = forms.CharField(initial="siege --concurrent 2 --delay 1 -f urls.txt", required = False)
       before_launch = forms.CharField(initial="%s db.%s" % (interpreter_name, extension), required=False)
-      hosts = forms.MultipleChoiceField(choices=[(x.id, x.name) for x in get_available_hosts()])
+      hosts = forms.MultipleChoiceField()
 
       def __init__(self, *args, **kwargs):
           super(ApplicationBuildForm, self).__init__(*args, **kwargs)
@@ -66,6 +71,9 @@ class ApplicationBuildForm(forms.Form):
           self.helper.form_class = 'form-horizontal' # FIXME : horizontal?
           self.helper.form_action = reverse('craneui.views.build_application')
           self.helper.help_text_inline = True
+          self.fields['hosts'].choices = \
+            [(x.id, x.name) for x in get_available_hosts()]
+
           # FIXME : inline interpreter/version
           self.helper.layout = Layout(
                'os',
