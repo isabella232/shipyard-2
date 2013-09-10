@@ -16,7 +16,7 @@ from containers.models import Host
 import crane.build
 from crane.base import crane_path
 from crane.inspect import list_versions, interpreter_extension
-from craneui.forms import ApplicationBuildForm, OsBuildForm, InterpreterBuildForm
+from craneui.forms import ApplicationBuildForm, OsBuildForm, InterpreterBuildForm, ThirdPartyForm
 
 from shipyard import utils
 from docker import client
@@ -115,6 +115,23 @@ def build_application(request):
     build_on_hosts(crane.build.build_application, args, hosts)
     messages.add_message(request, messages.INFO,
         _('Building %s/%s%s/%s image.  This may take a few minutes.' % (os, interpreter, version, application_name)))
+    return redirect(reverse('index'))
+
+@require_http_methods(['POST'])
+@login_required
+def build_third(request):
+    '''
+    Builds a third party software container image
+    '''
+    form = ThirdPartyBuildForm(request.POST)
+    os = form.data.get('os')
+    software = form.data.get('software')
+    hosts = form.data.getlist('hosts')
+
+    args = (os, software, hosts)
+    build_on_hosts(crane.build.build_third, args, hosts)
+    messages.add_message(request, messages.INFO,
+        _('Building %s image.  This may take a few minutes.' % software))
     return redirect(reverse('index'))
 
 def versions(request):

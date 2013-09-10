@@ -83,3 +83,18 @@ class ApplicationBuildForm(forms.Form):
                'after_launch',
                'hosts'
                )
+
+class ThirdBuildPartyForm(forms.Form):
+      os = forms.ChoiceField(choices=oses)
+      software = form.ChoiceField(choices=['mysql']) # FIXME : get live list
+      hosts = forms.MultipleChoiceField(choices=[(x.id, x.name) for x in get_available_hosts()])
+
+      def __init__(self, *args, **kwargs):
+          super(OsBuildForm, self).__init__(*args, **kwargs)
+          self.helper = FormHelper()
+          self.helper.form_id = 'form-build-third'
+          self.helper.form_class = 'form-horizontal' # FIXME : horizontal?
+          self.helper.form_action = reverse('craneui.views.build_third')
+          self.helper.help_text_inline = True
+
+
