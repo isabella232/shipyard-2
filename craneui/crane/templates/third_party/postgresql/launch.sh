@@ -7,6 +7,8 @@
 
 sudo -u postgres psql -U postgres -d postgres -c "alter user postgres with password '{{password}}';";
 
+# FIXME : createdb
+
 while true; do
     sleep 60;
 done

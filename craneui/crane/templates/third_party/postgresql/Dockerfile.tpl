@@ -1,7 +1,11 @@
 {% extends 'third_party/third_party.tpl' %}
 
+{% block configuration %}
+RUN adduser postgres
+{% endblock%}
+
 {% block debian %}
-RUN sudo apt-get install -y postgresql
+RUN apt-get install -y postgresql
 {% endblock%}
 
 {% block redhat %}

@@ -5,6 +5,8 @@ MAINTAINER New Relic Crane UI
 ADD . /
 RUN chmod 755 /launch.sh
 
+{% block configuration %}{%endblock%}
+
 {%- if os in ['debian', 'ubuntu']%}
 {% block debian %}{%endblock%}
 {%- elif os in ['redhat', 'centos']%}

@@ -13,7 +13,8 @@ extensions =\
 ports =\
 {
   'postgresql' : '5432',
-  'redis' : '6379'
+  'redis' : '6379',
+  'mysql' : '3306',
 }
 
 volumes =\

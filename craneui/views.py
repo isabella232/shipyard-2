@@ -129,7 +129,7 @@ def build_third(request):
     hosts = form.data.getlist('hosts')
     # FIXME : password field
 
-    args = (os, software, 'password')
+    args = (os, software, 'toor', 'aq')
     build_on_hosts(crane.build.build_third, args, hosts)
     messages.add_message(request, messages.INFO,
         _('Building %s image.  This may take a few minutes.' % software))

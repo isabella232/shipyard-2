@@ -82,7 +82,7 @@ def application_launch_script(interpreter, launch, after_launch):
     """
     return render_template__(APP_LAUNCH_SCRIPT % interpreter, **locals())
 
-def third_party_launch_script(software, password):
+def third_party_launch_script(software, root_password, user_password):
     """
     Render the script that will be use when the third party software container
     is launched

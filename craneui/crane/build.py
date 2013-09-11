@@ -68,7 +68,7 @@ def build_application(interpreter
     Dockerfile = render.application_Dockerfile(interpreter, version, os, repository, application_name, git_url, port)
     return build(client_url, repository, Dockerfile, application_folder, locals(), tag)
 
-def build_third(os, software, password, repository, client_url):
+def build_third(os, software, root_password, user_password, repository, client_url):
     """
     Build a container that host a third party software like a database for exemple
     """
@@ -77,7 +77,7 @@ def build_third(os, software, password, repository, client_url):
        mkdir(third_party_folder, 0755)
     
     save_in('%s/launch.sh' % third_party_folder
-           ,render.third_party_launch_script(software, password))
+           ,render.third_party_launch_script(software, root_password, user_password))
 
     tag = '%(os)s/%(software)s' % locals()
     Dockerfile = render.third_party_Dockerfile(os, software, repository, client_url)
