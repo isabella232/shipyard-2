@@ -3,6 +3,7 @@ FROM {{repository}}/{{os}}
 MAINTAINER New Relic Crane UI
 
 ADD . /
+RUN chmod 755 /launch.sh
 
 {%- if os in ['debian', 'ubuntu']%}
 {% block debian %}{%endblock%}
@@ -12,6 +13,6 @@ ADD . /
 
 EXPOSE {{port}}
 
-VOLUME {{volume}}
+#VOLUME {{volume}}
 
 CMD /launch.sh

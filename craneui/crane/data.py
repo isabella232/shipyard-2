@@ -9,3 +9,14 @@ extensions =\
   'python' : 'py',
   'ruby' : 'rb'
 }
+
+ports =\
+{
+  'postgresql' : '5432',
+  'redis' : '6379'
+}
+
+volumes =\
+{
+  'postgresql' : '/var/lib/postgresql'
+}

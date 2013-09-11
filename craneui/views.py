@@ -16,7 +16,7 @@ from containers.models import Host
 import crane.build
 from crane.base import crane_path
 from crane.inspect import list_versions, interpreter_extension
-from craneui.forms import ApplicationBuildForm, OsBuildForm, InterpreterBuildForm, ThirdPartyForm
+from craneui.forms import ApplicationBuildForm, OsBuildForm, InterpreterBuildForm, ThirdPartyBuildForm
 
 from shipyard import utils
 from docker import client
@@ -127,8 +127,9 @@ def build_third(request):
     os = form.data.get('os')
     software = form.data.get('software')
     hosts = form.data.getlist('hosts')
+    # FIXME : password field
 
-    args = (os, software, hosts)
+    args = (os, software, 'password')
     build_on_hosts(crane.build.build_third, args, hosts)
     messages.add_message(request, messages.INFO,
         _('Building %s image.  This may take a few minutes.' % software))

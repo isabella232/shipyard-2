@@ -20,7 +20,7 @@ from django.contrib.auth.decorators import login_required
 from containers.models import Host, Container
 from containers.forms import (HostForm, CreateContainerForm,
     ImportRepositoryForm, ImageBuildForm)
-from craneui.forms import ApplicationBuildForm, OsBuildForm, InterpreterBuildForm
+from craneui.forms import ApplicationBuildForm, OsBuildForm, InterpreterBuildForm, ThirdPartyBuildForm
 from shipyard import utils
 
 @login_required
@@ -33,6 +33,7 @@ def index(request):
         'form_build_application': ApplicationBuildForm(),
         'form_build_os': OsBuildForm(),
         'form_build_interpreter': InterpreterBuildForm(),
+        'form_build_third' : ThirdPartyBuildForm(),
     }
     return render_to_response('dashboard/index.html', ctx,
         context_instance=RequestContext(request))

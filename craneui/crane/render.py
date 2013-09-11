@@ -1,6 +1,7 @@
+from jinja2 import Environment, FileSystemLoader
+from data import ports
 from base import crane_path
 from os import path, mkdir
-from jinja2 import Environment, FileSystemLoader
 import hashlib
 import time
 
@@ -14,6 +15,7 @@ jinja_env = Environment(loader=FileSystemLoader([crane_path('templates'), crane_
 OS_TPL = 'os/%s.tpl'
 INTERPRETER_TPL = 'interpreter/%s/%s.tpl'
 APP_TPL = 'app/Dockerfile.tpl'
+THIRD_PARTY_TPL = 'third_party/%s/Dockerfile.tpl'
 
 DEFAULT_PORT = 5000
 
@@ -41,15 +43,24 @@ def interpreter_Dockerfile(interpreter, version, os, repository):
 
 def application_Dockerfile(interpreter, version, os, repository, application_name, git_url, port = DEFAULT_PORT):
     """
-    Render the Dockerfile for the container
+    Render the Dockerfile for an application container
     """
     return render_template__(APP_TPL, **locals())
+
+def third_party_Dockerfile(os, software, repository, client_url):
+    """
+    Render the Dockerfile for a third party software like a database for example
+    """
+    port = ports[software]
+    # FIXME : get the volume in data
+    return render_template__(THIRD_PARTY_TPL % software, **locals())
 
 #   Scripts -----------------------------------------------------------------------------------
 
 INTERPRETER_SCRIPT = 'interpreter/%s/install.sh'
 APP_BUILD_SCRIPT = 'app/%s/buildapp.sh'
 APP_LAUNCH_SCRIPT = 'app/%s/launch.sh'
+THIRD_PARTY_LAUNCH_SCRIPT = 'third_party/%s/launch.sh'
 
 def interpreter_install_script(interpreter):
     """
@@ -67,6 +78,13 @@ def application_install_script(interpreter, application_name, configuration):
 
 def application_launch_script(interpreter, launch, after_launch):
     """
-    Render the script that will be use when the container is launched.
+    Render the script that will be use when the application container is launched.
     """
     return render_template__(APP_LAUNCH_SCRIPT % interpreter, **locals())
+
+def third_party_launch_script(software, password):
+    """
+    Render the script that will be use when the third party software container
+    is launched
+    """
+    return render_template__(THIRD_PARTY_LAUNCH_SCRIPT % software, **locals())

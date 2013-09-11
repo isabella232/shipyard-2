@@ -19,6 +19,15 @@ def list_interpreters():
         interpreters.append((interpreter, interpreter))
     return interpreters
 
+def list_third_party_softwares():
+    third_party_raw = listdir(crane_path('templates/third_party'))
+    third_party_raw.remove('third_party.tpl')
+    third_party_softwares = []
+    for third_party in third_party_raw:
+        if third_party.find('.') == -1:
+           third_party_softwares.append((third_party, third_party))
+    return third_party_softwares
+
 def list_versions(interpreter):
     if interpreter not in versions:
        raise Exception("This interpreter is not currently supported.")

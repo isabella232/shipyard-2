@@ -120,11 +120,10 @@
     <h3>{% trans 'Third party' %}</h3>
   </div>
   <div class="modal-body">
-      {# FIXME : put the crane form helper call #}
-      Third party
+    {% crispy form_build_third form_build_third.helper %}
   </div>
   <div class="modal-footer">
-    <a href="#" id="btn-build-image" class="btn btn-primary btn-large">{% trans 'Build' %}</a>
+    <a href="#" id="btn-build-third" class="btn btn-primary btn-large">{% trans 'Build' %}</a>
     <a href="#" class="btn btn-large" data-dismiss="modal" aria-hidden="true">{% trans 'Cancel' %}</a>
   </div>
 </div>
@@ -193,14 +192,17 @@
     });
 
     <!-- Crane behaviour -->
-    $("#btn-build-application").click(function(){
-        $("#form-build-application").submit();    
-    });
     $("#btn-build-os").click(function(){
         $("#form-build-os").submit();    
     });
     $("#btn-build-interpreter").click(function(){
         $("#form-build-interpreter").submit();    
+    });
+    $("#btn-build-application").click(function(){
+        $("#form-build-application").submit();    
+    });
+    $("#btn-build-third").click(function(){
+        $("#form-build-third").submit();    
     });
 
     function refresh_version(emitter) {
