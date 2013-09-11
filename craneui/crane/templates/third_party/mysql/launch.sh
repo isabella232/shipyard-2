@@ -3,7 +3,7 @@
 # Launch sshd
 /usr/sbin/sshd;
 
-/usr/sbin/mysqld &
+/usr/sbin/mysqld --bind-address='0.0.0.0'&
 
 sleep 10;
 
