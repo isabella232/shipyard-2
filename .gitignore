@@ -17,3 +17,5 @@ build_logs
 dump.rdb
 craneui/crane/build/app
 craneui/crane/build/third_party
+
+maestro
