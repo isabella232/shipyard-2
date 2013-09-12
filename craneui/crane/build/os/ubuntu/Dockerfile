@@ -2,7 +2,7 @@ FROM ubuntu
 
 MAINTAINER New Relic Crane UI
 
-ENV BUILD ac170f1703603a24013105623a301234d452851b476b8a185425a727b29f790e
+ENV BUILD ca6d3a2ba20c340af99fd2c3795321656d1ef590ef7ab83dda8663ad09ce2dc0
 
 RUN useradd qa --home /home/qa/ --shell `which bash`
 RUN mkdir /home/qa

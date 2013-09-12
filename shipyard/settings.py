@@ -198,6 +198,7 @@ INSTALLED_APPS = (
     'accounts',
     'dashboard',
     'applications',
+    'craneui',
     'containers',
 )
 

@@ -55,6 +55,7 @@
               {% if request.user.id != None %}
               <li id="nav-dashboard"><a href="{% url 'dashboard.views.index' %}">{% trans 'dashboard' %}</a></li>
               <li id="nav-applications"><a href="{% url 'applications.views.index' %}">{% trans 'applications' %}</a></li>
+              <li id="nav-crane"><a href="{% url 'craneui.views.index' %}">{% trans 'crane' %}</a></li>
               {% endif %}
             </ul>
             <ul class="nav pull-right">

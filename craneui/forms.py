@@ -1,6 +1,6 @@
 from django import forms
 from containers.models import Host
-from containers.forms import get_available_hosts
+from containers.forms import get_available_hosts, get_image_choices
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Field, Div
 from crispy_forms.bootstrap import FieldWithButtons, StrictButton
@@ -15,6 +15,50 @@ third_party = list_third_party_softwares()
 interpreter_name = interpreters[0][1]
 extension = interpreter_extension(interpreter_name)
 versions = list_versions(interpreter_name)
+
+def get_application_images():
+    raw_images = get_image_choices()
+    images = []
+    for image in raw_images:
+        if image[1].count('/') == 4:
+           images.append(image)
+    return images
+
+# FIXME : put in view, do ajax for this
+def get_existing_database():
+    # FIXME : list the dir on remote host
+    return []
+
+class CreateContainerForm(forms.Form):
+      application = forms.ChoiceField()
+      third_party_software = forms.ChoiceField()
+      database_name = forms.CharField()
+      existing_database = forms.ChoiceField()
+      description = forms.CharField(required=False)
+      memory = forms.CharField(required=False, help_text='Memory in MB')
+      environment = forms.CharField(required=False,
+        help_text='key=value space separated pairs')
+      volume = forms.CharField(required=False, help_text='container volume (i.e. /mnt/volume)')
+      volumes_from = forms.CharField(required=False,
+        help_text='mount volumes from specified container')
+      hosts = forms.MultipleChoiceField()
+      private = forms.BooleanField()
+      privileged = forms.BooleanField()
+
+      def __init__(self, *args, **kwargs):
+         super(CreateContainerForm, self).__init__(*args, **kwargs)
+         self.helper = FormHelper()
+         self.helper.form_id = 'form-create-container'
+         self.helper.form_class = 'form-horizontal'
+         self.helper.form_action = reverse('craneui.views.create_container')
+         self.helper.help_text_inline = True
+         self.fields['third_party_software'].choices =\
+                    [('', '----------')] + list_third_party_softwares()
+         self.fields['existing_database'].choices = [('', '----------')]
+         self.fields['application'].choices = [('', '----------')] + \
+             [x for x in get_application_images()]
+         self.fields['hosts'].choices = \
+             [(x.id, x.name) for x in get_available_hosts()]
 
 class OsBuildForm(forms.Form):
       os = forms.ChoiceField(choices=oses)

@@ -75,58 +75,6 @@
     <a href="#" class="btn btn-large" data-dismiss="modal" aria-hidden="true">{% trans 'Cancel' %}</a>
   </div>
 </div>
-<div id="dialog-crane-application" class="modal hide">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3>{% trans 'Application' %}</h3>
-  </div>
-  <div class="modal-body">
-    {% crispy form_build_application form_build_application.helper %}
-  </div>
-  <div class="modal-footer">
-    <a href="#" id="btn-build-application" class="btn btn-primary btn-large">{% trans 'Build' %}</a>
-    <a href="#" class="btn btn-large" data-dismiss="modal" aria-hidden="true">{% trans 'Cancel' %}</a>
-  </div>
-</div>
-<div id="dialog-crane-interpreter" class="modal hide">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3>{% trans 'Interpreter' %}</h3>
-  </div>
-  <div class="modal-body">
-    {% crispy form_build_interpreter form_build_interpreter.helper %}
-  </div>
-  <div class="modal-footer">
-    <a href="#" id="btn-build-interpreter" class="btn btn-primary btn-large">{% trans 'Build' %}</a>
-    <a href="#" class="btn btn-large" data-dismiss="modal" aria-hidden="true">{% trans 'Cancel' %}</a>
-  </div>
-</div>
-<div id="dialog-crane-os" class="modal hide">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3>{% trans 'Os' %}</h3>
-  </div>
-  <div class="modal-body">
-    {% crispy form_build_os form_build_os.helper %}
-  </div>
-  <div class="modal-footer">
-    <a href="#" id="btn-build-os" class="btn btn-primary btn-large">{% trans 'Build' %}</a>
-    <a href="#" class="btn btn-large" data-dismiss="modal" aria-hidden="true">{% trans 'Cancel' %}</a>
-  </div>
-</div>
-<div id="dialog-crane-third" class="modal hide">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3>{% trans 'Third party' %}</h3>
-  </div>
-  <div class="modal-body">
-    {% crispy form_build_third form_build_third.helper %}
-  </div>
-  <div class="modal-footer">
-    <a href="#" id="btn-build-third" class="btn btn-primary btn-large">{% trans 'Build' %}</a>
-    <a href="#" class="btn btn-large" data-dismiss="modal" aria-hidden="true">{% trans 'Cancel' %}</a>
-  </div>
-</div>
 
 <div class="toolbar fill">
     <div class="btn-group">
@@ -148,21 +96,6 @@
             <li><a href="#dialog-build-image" data-toggle="modal">{% trans 'Build' %}</a></li>
         </ul>
     </div>
-    <div class="btn-group">
-        <a href="#" class="btn dropdown-toggle" data-toggle="dropdown">
-          {% trans 'Crane' %}
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-            <li><a href="#dialog-crane-application" data-toggle="modal">{% trans 'Application' %}</a></li>
-            <li class="divider"></li>
-            <li><a href="#dialog-crane-interpreter" data-toggle="modal">{% trans 'Interpreter' %}</a></li>
-            <li><a href="#dialog-crane-os" data-toggle="modal">{% trans 'OS' %}</a></li>
-            <li><a href="#dialog-crane-third" data-toggle="modal">{% trans 'Third party software' %}</a></li>
-        </ul>
-    </div>
-</div>
-
 <div id="host-info" class="fill">
 </div>
 <script type="text/javascript">
@@ -190,69 +123,6 @@
     $("#btn-build-image").click(function(){
         $("#form-build-image").submit();
     });
-
-    <!-- Crane behaviour -->
-    $("#btn-build-os").click(function(){
-        $("#form-build-os").submit();    
-    });
-    $("#btn-build-interpreter").click(function(){
-        $("#form-build-interpreter").submit();    
-    });
-    $("#btn-build-application").click(function(){
-        $("#form-build-application").submit();    
-    });
-    $("#btn-build-third").click(function(){
-        $("#form-build-third").submit();    
-    });
-
-    function refresh_version(emitter) {
-        emitter_id = '#' + emitter + '_interpreter'
-        emitter_version = '#' + emitter + '_version'
-
-        var ajax_requext = $.ajax({
-            url : '/craneui/versions',
-            data: {'interpreter': $(emitter_id).val()}
-        })
-        .done(function(result) {
-                 $(emitter_version).empty();
-
-                 for (i = 0; i < result['versions'].length; ++i) {
-                    $(emitter_version).append($("<option></option>").text(result['versions'][i][0]))
-                 }
-        })
-        .fail(function( jqxhr, textStatus, error  ) {
-                 var err = textStatus + ', ' + error;
-                 console.log( "Request Failed: " + err );
-        });
-    }
-
-    function interpreter_extension(interpreter) {
-        return ajax_requext = $.ajax({
-            url : '/craneui/extensions',
-            data: {'interpreter': interpreter}
-        })
-        .done(function(result) {
-        })
-        .fail(function( jqxhr, textStatus, error  ) {
-                 var err = textStatus + ', ' + error;
-                 console.log( "Request Failed: " + err );
-        });
-    }
-
-    $("#interpreter_interpreter").change(function(){refresh_version('interpreter');});
-
-    $("#application_interpreter").change(function(){
-        refresh_version('application');
-        var interpreter = $('#application_interpreter').val()
-
-        $.when(interpreter_extension(interpreter))
-        .done(function(result) {
-            $('#id_launch').val(interpreter + ' app.' + result['extension']);
-            $('#id_configuration').val(interpreter + ' db.' + result['extension']);
-        });
-     });
-
-    <!-- End-->
 
     $("#btn-search-repository").click(function(){
         var qry = $("#search-repository-query").val();

@@ -1,6 +1,9 @@
 from django.conf.urls import patterns, url
 
 urlpatterns = patterns('craneui.views',
+    url(r'^$', 'index', name='craneui.index'),
+    url(r'^create_container/$', 'create_container',
+        name='craneui.create_container'),
     url(r'^buildos/$', 'build_os',
         name='craneui.build_os'),
     url(r'^buildinterpreter/$', 'build_interpreter',

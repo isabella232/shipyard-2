@@ -110,8 +110,6 @@ class Host(models.Model):
                 images = []
         return images
 
-    # FIXME : decorator that check if software need a volume
-    # i need a volumes just change the volumes argument
     def create_container(self, image=None, command=None, ports=[],
         environment=[], memory=0, description='', volumes=[],
         volumes_from='', privileged=False, owner=None):
