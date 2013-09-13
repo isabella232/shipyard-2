@@ -14,6 +14,7 @@ from django.template import RequestContext
 from containers.models import Host
 
 import crane.build
+import cranui
 from crane.base import crane_path
 from crane.inspect import list_versions, interpreter_extension
 from craneui.forms import ApplicationBuildForm, OsBuildForm, InterpreterBuildForm, ThirdPartyBuildForm, CreateContainerForm
@@ -116,7 +117,7 @@ def create_container(request):
     status = False
     for i in hosts:
         host = Host.objects.get(id=i)
-        c_id, status = create_container(host
+        c_id, status = cranui.models.create_container(host
                                        ,application
                                        ,environment=environment
                                        ,memory=memory
