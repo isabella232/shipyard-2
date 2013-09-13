@@ -4,6 +4,7 @@ MAINTAINER New Relic Crane UI
 
 ADD . /
 RUN chmod 755 /launch.sh
+RUN mkdir /home/qa/databases
 
 {% block configuration %}{%endblock%}
 

@@ -56,7 +56,8 @@ def client_url(host):
         url = 'http://{0}'.format(url)
     return url
 
-DATABASE_FOLDER = '/tmp/databases'
+CONTAINER_DATABASE_FOLDER = '/home/qa/databases'
+HOST_DATABASE_FOLDER = '/tmp/databases'
 
 @require_http_methods(['POST'])
 @login_required
@@ -83,7 +84,7 @@ def create_container(request):
           messages.add_message(request, messages.ERROR, _('No database selected'))
           return redirect('craneui.views.index')
  
-       database_folder = path.join(DATABASE_FOLDER, third_party_software, application_name, database_name)
+       database_folder = path.join(HOST_DATABASE_FOLDER, third_party_software, application_name, database_name)
        if not path.exists(database_folder):
           mkdir(database_folder)
     
@@ -91,19 +92,22 @@ def create_container(request):
        messages.add_message(request, messages.ERROR, _('No hosts selected'))
        return redirect('craneui.views.index')
 
+   # FIXME: volume = {'/home/qa/databases' : {}}
     if environment.strip() == '':
        environment = None
     else:
        environment = environment.split()
        if third_party_software:
-          environment += ['DATA_DIRECTORY=' + database_folder]
+          environment += ['DATA_DIRECTORY=' + CONTAINER_DATABASE_FOLDER]
     # build volumes
     if volume == '':
        volume = None
-    else:
-       volume = { volume: {}}
        if third_party_software:
-          volume.update({database_folder: {}})
+          volume = {CONTAINER_DATABASE_FOLDER: {}}
+    else:
+       volume = { volume : {}}
+       if third_party_software:
+          volume.update({CONTAINER_DATABASE_FOLDER: {}})
     # convert memory from MB to bytes
     if memory.strip() == '':
        memory = 0
@@ -112,17 +116,18 @@ def create_container(request):
     status = False
     for i in hosts:
         host = Host.objects.get(id=i)
-        c_id, status = host.create_container(application
-                                            ,None
-                                            ,[]
-                                            ,environment=environment
-                                            ,memory=memory
-                                            ,description=description
-                                            ,volumes=volume
-                                            ,volumes_from=volumes_from
-                                            ,privileged=bool(privileged)
-                                            ,owner=request.user
-                                             if private else None)
+        c_id, status = create_container(host
+                                       ,application
+                                       ,environment=environment
+                                       ,memory=memory
+                                       ,description=description
+                                       ,volumes=volume
+                                       ,volumes_from=volumes_from
+                                       ,privileged=bool(privileged)
+                                       ,owner=request.user
+                                        if private else None
+                                       ,{HOST_DATABASE_FOLDER
+                                        :CONTAINER_DATABASE_FOLDER})
         if status:
            messages.add_message(request, messages.INFO,
                               _('Created ') + application +
