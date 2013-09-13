@@ -127,8 +127,8 @@ def create_container(request):
                                        ,privileged=bool(privileged)
                                        ,owner=request.user
                                         if private else None
-                                       ,{HOST_DATABASE_FOLDER
-                                        :CONTAINER_DATABASE_FOLDER})
+                                       ,binds={HOST_DATABASE_FOLDER
+                                              :CONTAINER_DATABASE_FOLDER})
         if status:
            messages.add_message(request, messages.INFO,
                               _('Created ') + application +
