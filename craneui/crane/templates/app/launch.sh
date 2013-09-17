@@ -1,13 +1,14 @@
 #!/bin/bash
 
 cd `dirname "$0"`;
-rbenv rehash;
+{{env_manager}};
 
 if [ $# -eq 0 ]  || [[ $# -gt 0  &&  -z "$1" ]]
 then
 	# Launch the app in background
 	{{launch}} &
 else
+	echo $1;
 	$1 &
 fi
 

@@ -1,9 +1,7 @@
 from jinja2 import Environment, FileSystemLoader
-from data import ports
+from data import ports, manager
 from base import crane_path
 from os import path, mkdir
-import hashlib
-import time
 
 """
 In this file are all the function use to render the crane templates:
@@ -11,13 +9,6 @@ Dockerfiles, scripts, etc
 """
 
 jinja_env = Environment(loader=FileSystemLoader([crane_path('templates'), crane_path('build')]))
-
-OS_TPL = 'os/%s.tpl'
-INTERPRETER_TPL = 'interpreter/%s/%s.tpl'
-APP_TPL = 'app/Dockerfile.tpl'
-THIRD_PARTY_TPL = 'third_party/%s/Dockerfile.tpl'
-
-DEFAULT_PORT = 5000
 
 #   Dockerfiles -----------------------------------------------------------------------------------
 
@@ -31,67 +22,59 @@ def os_Dockerfile(os):
     """
     Render the Dockerfile that install an os in a container.
     """
-    build_hash = hashlib.sha256(str(time.time())).hexdigest()
-    return render_template__(OS_TPL % os, **locals())
+    return render_template__('os/%s.tpl' % os, **locals())
 
 def interpreter_Dockerfile(interpreter, version, os, repository):
     """
     Render the Dockerfile that install an interpreter version in a container.
     """
-    # FIXME: add a build hash in ENV
-    return render_template__(INTERPRETER_TPL % (interpreter, interpreter), **locals())
+    return render_template__('interpreter/%s/%s.tpl' % (interpreter, interpreter), **locals())
+
+DEFAULT_PORT = 5000
 
 def application_Dockerfile(interpreter, version, os, repository, application_name, git_url, port = DEFAULT_PORT):
     """
     Render the Dockerfile for an application container
     """
-    return render_template__(APP_TPL, **locals())
+    return render_template__('app/Dockerfile.tpl', **locals())
 
 def third_party_Dockerfile(os, software, repository, client_url):
     """
     Render the Dockerfile for a third party software like a database for example
     """
     port = ports[software]
-    # FIXME : get the volume in data
-    return render_template__(THIRD_PARTY_TPL % software, **locals())
+    return render_template__('third_party/%s/Dockerfile.tpl' % software, **locals())
 
 #   Scripts -----------------------------------------------------------------------------------
-
-INTERPRETER_SCRIPT = 'interpreter/%s/install.sh'
-APP_BUILD_SCRIPT = 'app/%s/buildapp.sh'
-APP_LAUNCH_SCRIPT = 'app/%s/launch.sh'
-APP_LAUNCHER_SCRIPT = 'app/%s/launcher.sh'
-THIRD_PARTY_LAUNCH_SCRIPT = 'third_party/%s/launch.sh'
 
 def interpreter_install_script(interpreter):
     """
     Render the script that install an interpreter version and its package/version manager.
     """
-    return render_template__(INTERPRETER_SCRIPT % interpreter, **{}) # No need for variables here
-
+    return render_template__('interpreter/%s/install.sh' % interpreter, **{}) # No need for variables here
 
 def application_install_script(interpreter, application_name, configuration):
     """
     Render the script that install the app into the container. 
     """
-    return render_template__(APP_BUILD_SCRIPT % interpreter, **locals())
-
+    return render_template__('app/%s/buildapp.sh' % interpreter, **locals())
 
 def application_launch_script(interpreter, launch, after_launch):
     """
     Render the script that will be use when the application container is launched.
     """
-    return render_template__(APP_LAUNCH_SCRIPT % interpreter, **locals())
+    env_manager = manager[interpreter]
+    return render_template__('app/launch.sh', **locals())
 
 def application_launcher_script(interpreter, launch, after_launch):
     """
     Render the script that will be use when the application container is launched.
     """
-    return render_template__(APP_LAUNCHER_SCRIPT % interpreter, **locals())
+    return render_template__('app/launcher.sh', **locals())
 
 def third_party_launch_script(software, root_password, user_password):
     """
     Render the script that will be use when the third party software container
     is launched
     """
-    return render_template__(THIRD_PARTY_LAUNCH_SCRIPT % software, **locals())
+    return render_template__('third_party/%s/launch.sh' % software, **locals())
