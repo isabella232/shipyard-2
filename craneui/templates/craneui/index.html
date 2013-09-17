@@ -151,7 +151,7 @@
         $.when(interpreter_extension(interpreter))
         .done(function(result) {
             $('#id_launch').val(interpreter + ' app.' + result['extension']);
-            $('#id_configuration').val(interpreter + ' db.' + result['extension']);
+            $('#id_before_launch').val(interpreter + ' db.' + result['extension']);
         });
      });
 

@@ -1,4 +1,5 @@
 from docker import client
+from containers.models import Container
 
 def create_container(host
                     ,image
@@ -14,7 +15,6 @@ def create_container(host
     cnt = c.create_container(image
                             ,None
                             ,detach=True
-                            ,ports=ports
                             ,mem_limit=memory
                             ,tty=True
                             ,stdin_open=True
@@ -23,7 +23,9 @@ def create_container(host
                             ,volumes_from=volumes_from
                             ,privileged=privileged)
     c_id = cnt.get('Id')
-    c.start(c_id, binds)
+    from pprint import pprint
+    pprint(binds)
+    c.start(c_id, binds=binds)
     status = False
     # create metadata only if container starts successfully
     if c.inspect_container(c_id).get('State', {}).get('Running'):
@@ -35,3 +37,4 @@ def create_container(host
        status = True
        # clear host cache
        host._invalidate_container_cache()
+    return c_id, status

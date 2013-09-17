@@ -3,6 +3,7 @@
 # Launch sshd
 /usr/sbin/sshd;
 
+/usr/bin/mysql_install_db --datadir=$DATA_DIRECTORY;
 /usr/sbin/mysqld --bind-address='0.0.0.0' --datadir=$DATA_DIRECTORY &
 
 sleep 10;

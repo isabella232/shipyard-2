@@ -1,20 +1,18 @@
 #!/bin/bash
 
-# Launch sshd
-/usr/sbin/sshd;
-
 cd `dirname "$0"`;
 source venv/bin/activate;
 
-# Launch the app in background
-
-{{launch}} &
+if [ $# -eq 0 ]  || [[ $# -gt 0  &&  -z "$1" ]]
+then
+	# Launch the app in background
+	{{launch}} &
+else
+	echo $1;
+	$1 &
+fi
 
 # After launch
 {% if after_launch %}
 {{after_launch}}
-{% else %}
-while true; do
-    sleep 60;
-done
 {% endif %}

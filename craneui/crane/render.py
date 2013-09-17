@@ -60,6 +60,7 @@ def third_party_Dockerfile(os, software, repository, client_url):
 INTERPRETER_SCRIPT = 'interpreter/%s/install.sh'
 APP_BUILD_SCRIPT = 'app/%s/buildapp.sh'
 APP_LAUNCH_SCRIPT = 'app/%s/launch.sh'
+APP_LAUNCHER_SCRIPT = 'app/%s/launcher.sh'
 THIRD_PARTY_LAUNCH_SCRIPT = 'third_party/%s/launch.sh'
 
 def interpreter_install_script(interpreter):
@@ -81,6 +82,12 @@ def application_launch_script(interpreter, launch, after_launch):
     Render the script that will be use when the application container is launched.
     """
     return render_template__(APP_LAUNCH_SCRIPT % interpreter, **locals())
+
+def application_launcher_script(interpreter, launch, after_launch):
+    """
+    Render the script that will be use when the application container is launched.
+    """
+    return render_template__(APP_LAUNCHER_SCRIPT % interpreter, **locals())
 
 def third_party_launch_script(software, root_password, user_password):
     """

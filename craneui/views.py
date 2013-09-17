@@ -14,10 +14,10 @@ from django.template import RequestContext
 from containers.models import Host
 
 import crane.build
-import cranui
 from crane.base import crane_path
 from crane.inspect import list_versions, interpreter_extension
 from craneui.forms import ApplicationBuildForm, OsBuildForm, InterpreterBuildForm, ThirdPartyBuildForm, CreateContainerForm
+from craneui import models
 
 from shipyard import utils
 from docker import client
@@ -59,6 +59,7 @@ def client_url(host):
 
 CONTAINER_DATABASE_FOLDER = '/home/qa/databases'
 HOST_DATABASE_FOLDER = '/tmp/databases'
+CMD = '/home/qa/website/%(application_name)s/launcher.sh "%(command)s"'
 
 @require_http_methods(['POST'])
 @login_required
@@ -76,9 +77,16 @@ def create_container(request):
     private = form.data.get('private')
     privileged = form.data.get('privileged')
     description = form.data.get('description')
+    command = form.data.get('command')
+
+    if not command:
+       command = ''
+    else:
+       application_name = application.split('/')[3].split(':')[0]
+       command = CMD % (locals())
 
     if third_party_software:
-       application_name = application.split('/')[3]
+       application_name = application.split('/')[3].split(':')[0]
        if existing_database:
           database_name = existing_database
        elif not database_name:
@@ -96,6 +104,8 @@ def create_container(request):
    # FIXME: volume = {'/home/qa/databases' : {}}
     if environment.strip() == '':
        environment = None
+       if third_party_software:
+          environment = ['DATA_DIRECTORY=' + CONTAINER_DATABASE_FOLDER]
     else:
        environment = environment.split()
        if third_party_software:
@@ -103,32 +113,40 @@ def create_container(request):
     # build volumes
     if volume == '':
        volume = None
-       if third_party_software:
-          volume = {CONTAINER_DATABASE_FOLDER: {}}
     else:
        volume = { volume : {}}
-       if third_party_software:
-          volume.update({CONTAINER_DATABASE_FOLDER: {}})
     # convert memory from MB to bytes
     if memory.strip() == '':
        memory = 0
     else:
        memory = int(memory) * 1048576
     status = False
+    user = request.user if private else None
     for i in hosts:
         host = Host.objects.get(id=i)
-        c_id, status = cranui.models.create_container(host
-                                       ,application
+	
+# APPLICATION
+        c_id, status = host.create_container(application, command, [],
+            environment=environment, memory=memory,
+            description=description, volumes=volume,
+            volumes_from=volumes_from, privileged=privileged, owner=user)
+	print c_id
+	if third_party_software:
+           third_party_software = host.hostname + '/' + 'ubuntu/' + third_party_software # FIXME : Hard coded os
+# DATABASE
+           t_id, t_status = models.create_container(host
+                                       ,third_party_software
                                        ,environment=environment
                                        ,memory=memory
                                        ,description=description
-                                       ,volumes=volume
+                                       ,volumes={CONTAINER_DATABASE_FOLDER: {}}
                                        ,volumes_from=volumes_from
                                        ,privileged=bool(privileged)
                                        ,owner=request.user
                                         if private else None
-                                       ,binds={HOST_DATABASE_FOLDER
-                                              :CONTAINER_DATABASE_FOLDER})
+				       ,binds={database_folder
+					      :CONTAINER_DATABASE_FOLDER})
+	   # FIXME :add third_party software flash message
         if status:
            messages.add_message(request, messages.INFO,
                               _('Created ') + application +
@@ -213,7 +231,7 @@ def build_application(request):
     build_on_hosts(crane.build.build_application, args, hosts, request,
                _('Building %s/%s%s/%s image.  This may take a few minutes.'
                %(os, interpreter, version, application_name)))
-    return redirect(reverse('cranui.views.index'))
+    return redirect(reverse('craneui.views.index'))
 
 @require_http_methods(['POST'])
 @login_required
@@ -231,7 +249,7 @@ def build_third(request):
     build_on_hosts(crane.build.build_third, args, hosts, request,
                  _('Building %s image.  This may take a few minutes.'
                  % software))
-    return redirect(reverse('cranuie.views.index'))
+    return redirect(reverse('craneui.views.index'))
 
 def versions(request):
     return HttpResponse(

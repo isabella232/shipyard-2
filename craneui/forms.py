@@ -34,6 +34,8 @@ class CreateContainerForm(forms.Form):
       third_party_software = forms.ChoiceField()
       database_name = forms.CharField()
       existing_database = forms.ChoiceField()
+      command = forms.CharField(required=False, help_text=\
+	'Override the command binded to the image.')
       description = forms.CharField(required=False)
       memory = forms.CharField(required=False, help_text='Memory in MB')
       environment = forms.CharField(required=False,

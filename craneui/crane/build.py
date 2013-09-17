@@ -63,6 +63,8 @@ def build_application(interpreter
            ,render.application_install_script(interpreter, application_name, before_launch))
     save_in('%s/launch.sh' % application_folder
            ,render.application_launch_script(interpreter, launch, after_launch))
+    save_in('%s/launcher.sh' % application_folder
+           ,render.application_launcher_script(interpreter, launch, after_launch))
 
     tag = '%(os)s/%(interpreter)s%(version)s/%(application_name)s' % locals()
     Dockerfile = render.application_Dockerfile(interpreter, version, os, repository, application_name, git_url, port)

@@ -2,9 +2,9 @@ FROM ubuntu
 
 MAINTAINER New Relic Crane UI
 
-ENV BUILD ca6d3a2ba20c340af99fd2c3795321656d1ef590ef7ab83dda8663ad09ce2dc0
+ENV BUILD 4efc0a2b0dc9f0de5f09496f4dfe442878df9692ae980f50d3b15f431c7a6c25
 
-RUN useradd qa --home /home/qa/ --shell `which bash`
+RUN useradd qa --home /home/qa/ --shell `which bash` --groups sudo
 RUN mkdir /home/qa
 RUN chown -R qa /home/qa
 
