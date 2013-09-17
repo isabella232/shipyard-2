@@ -83,7 +83,9 @@ def create_container(request):
        command = ''
     else:
        application_name = application.split('/')[3].split(':')[0]
+       command = command.replace('"', "\\\"")
        command = CMD % (locals())
+       print command
 
     if third_party_software:
        application_name = application.split('/')[3].split(':')[0]
