@@ -2,8 +2,6 @@ FROM {{os}}
 
 MAINTAINER New Relic Crane UI
 
-ENV BUILD {{build_hash}}
-
 RUN useradd qa --home /home/qa/ --shell `which bash` --groups sudo
 RUN mkdir /home/qa
 RUN chown -R qa /home/qa
