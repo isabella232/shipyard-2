@@ -21,7 +21,7 @@
         </ul>
     </div>
     <div class="btn-group">
-        <a href="#dialog-create-container" role="button" data-toggle="modal" class="btn btn-success">{% trans 'Create' %}</a>
+        <a href="#dialog-create-container" role="button" data-toggle="modal" class="btn btn-success">{% trans 'Launch container' %}</a>
     </div>
 </div>
 
@@ -129,10 +129,25 @@
         });
     }
 
+// FIXME : these two function could be factorized into one:
     function interpreter_extension(interpreter) {
         return ajax_requext = $.ajax({
             url : '/craneui/extensions',
             data: {'interpreter': interpreter}
+        })
+        .done(function(result) {
+        })
+        .fail(function( jqxhr, textStatus, error  ) {
+                 var err = textStatus + ', ' + error;
+                 console.log( "Request Failed: " + err );
+        });
+    }
+
+    function existing_databases(software, application_name) {
+	return ajax_requext = $.ajax({
+            url : '/craneui/databases/',
+            data: {'software': software
+		  ,'application_name' : application_name}
         })
         .done(function(result) {
         })
@@ -149,14 +164,37 @@
         var interpreter = $('#application_interpreter').val()
 
         $.when(interpreter_extension(interpreter))
-        .done(function(result) {
-            $('#id_launch').val(interpreter + ' app.' + result['extension']);
-            $('#id_before_launch').val(interpreter + ' db.' + result['extension']);
+         .done(function(result) {
+             $('#id_launch').val(interpreter + ' app.' + result['extension']);
+             $('#id_before_launch').val(interpreter + ' db.' + result['extension']);
         });
      });
 
+     $("#id_third_party_software").change(application_third_party);
+     $("#id_application").change(application_third_party);
+
+     function application_third_party(){
+	var software = $('#id_third_party_software').val();
+	var application = $('#id_application').val();
+
+	if (application.length) {
+	   application_name = application.split('/')
+           application_name = application_name[application_name.length - 1]
+	   application_name = application_name.split(':')[0]
+	
+           if (software.length)
+	      $.when(existing_databases(software, application_name))
+               .done(function(result) {
+                 $('#id_existing_database').empty();
+//                 $('id_existing_database').append($("<option></option>").text('----------'));
+
+                 for (i = 0; i < result['databases'].length; ++i) {
+		    console.log(result['databases'][i]);
+                    $('#id_existing_database').append($("<option></option>").text(result['databases'][i]))
+                 }
+	       });
+	   }
+     }
     <!-- End-->
-
-
 </script>
 {% endblock %}

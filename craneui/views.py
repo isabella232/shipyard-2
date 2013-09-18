@@ -15,13 +15,14 @@ from containers.models import Host
 
 import crane.build
 from crane.base import crane_path
-from crane.inspect import list_versions, interpreter_extension
+from crane.data import HOST_DATABASE_FOLDER
+from crane.inspect import list_versions, interpreter_extension, list_existing_databases
 from craneui.forms import ApplicationBuildForm, OsBuildForm, InterpreterBuildForm, ThirdPartyBuildForm, CreateContainerForm
 from craneui import models
 
 from shipyard import utils
 from docker import client
-from os import path, mkdir
+from os import path, makedirs
 
 import urllib
 import random
@@ -58,7 +59,6 @@ def client_url(host):
     return url
 
 CONTAINER_DATABASE_FOLDER = '/home/qa/databases'
-HOST_DATABASE_FOLDER = '/tmp/databases'
 CMD = '/home/qa/website/%(application_name)s/launcher.sh "%(command)s"'
 
 @require_http_methods(['POST'])
@@ -97,7 +97,7 @@ def create_container(request):
  
        database_folder = path.join(HOST_DATABASE_FOLDER, third_party_software, application_name, database_name)
        if not path.exists(database_folder):
-          mkdir(database_folder)
+          makedirs(database_folder)
     
     if not hosts:
        messages.add_message(request, messages.ERROR, _('No hosts selected'))
@@ -261,4 +261,10 @@ def versions(request):
 def extensions(request):
     return HttpResponse(
             json.dumps({'extension' : interpreter_extension(request.GET['interpreter'])})
+           ,mimetype="application/json")
+
+def databases(request):
+    return HttpResponse(
+            json.dumps({'databases' : list_existing_databases(request.GET['software']\
+                                                             ,request.GET['application_name'])})
            ,mimetype="application/json")

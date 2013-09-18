@@ -16,4 +16,6 @@ urlpatterns = patterns('craneui.views',
         name='craneui.versions'),
     url(r'^extensions/$', 'extensions',
         name='craneui.extensions'),
+    url(r'^databases/$', 'databases',
+        name='craneui.databases'),
 )

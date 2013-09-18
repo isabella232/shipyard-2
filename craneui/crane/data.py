@@ -23,6 +23,8 @@ ports =\
   'mysql'      : '3306',
 }
 
+HOST_DATABASE_FOLDER = '/tmp/databases'
+
 volumes =\
 {
   'postgresql' : '/var/lib/postgresql'
