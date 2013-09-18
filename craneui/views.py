@@ -22,8 +22,8 @@ from craneui import models
 
 from shipyard import utils
 from docker import client
-from os import path, makedirs
 
+import os
 import urllib
 import random
 import json
@@ -95,9 +95,9 @@ def create_container(request):
           messages.add_message(request, messages.ERROR, _('No database selected'))
           return redirect('craneui.views.index')
  
-       database_folder = path.join(HOST_DATABASE_FOLDER, third_party_software, application_name, database_name)
-       if not path.exists(database_folder):
-          makedirs(database_folder)
+       database_folder = os.path.join(HOST_DATABASE_FOLDER, third_party_software, application_name, database_name)
+       if not os.path.exists(database_folder):
+          os.makedirs(database_folder)
     
     if not hosts:
        messages.add_message(request, messages.ERROR, _('No hosts selected'))
@@ -194,10 +194,10 @@ def build_interpreter(request):
 
 def handle_upload(interpreter, application_archive, archive_name, application_name):
     application_folder = crane_path('build/app/%s/%s' % (interpreter, application_name))
-    if not path.exists(application_folder):
-       mkdir(application_folder, 0755)
+    if not os.path.exists(application_folder):
+       os.makedirs(application_folder, 0755)
 
-    tmp_file = path.join(application_folder, archive_name)
+    tmp_file = os.path.join(application_folder, archive_name)
     with open(tmp_file, 'w') as d:
         for c in application_archive.chunks():
             d.write(c)

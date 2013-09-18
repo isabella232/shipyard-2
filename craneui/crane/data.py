@@ -23,7 +23,7 @@ ports =\
   'mysql'      : '3306',
 }
 
-HOST_DATABASE_FOLDER = '/tmp/databases'
+HOST_DATABASE_FOLDER = '/opt/crane/databases'
 
 volumes =\
 {
