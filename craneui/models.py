@@ -3,6 +3,7 @@ from containers.models import Container
 
 def create_container(host
                     ,image
+		    ,command
                     ,environment
                     ,memory
                     ,description
@@ -13,7 +14,7 @@ def create_container(host
                     ,binds):
     c = host._get_client()
     cnt = c.create_container(image
-                            ,None
+                            ,command
                             ,detach=True
                             ,mem_limit=memory
                             ,tty=True
@@ -23,8 +24,6 @@ def create_container(host
                             ,volumes_from=volumes_from
                             ,privileged=privileged)
     c_id = cnt.get('Id')
-    from pprint import pprint
-    pprint(binds)
     c.start(c_id, binds=binds)
     status = False
     # create metadata only if container starts successfully

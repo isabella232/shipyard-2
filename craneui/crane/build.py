@@ -21,28 +21,28 @@ def build(client_url, repository, result, build_path, variables, tag):
     print "Building is finished"
     return log
 
-def build_os(os, repository, client_url):
+def build_os(os_, repository, client_url):
     """
     Build an os container based on a Dockerfile.
     """
-    os_path = crane_path('build/os/%s' % os)
-    Dockerfile = render.os_Dockerfile(os)
-    return build(client_url, repository, Dockerfile, os_path, {'os' : os} , os)
+    os_path = crane_path('build/os/%s' % os_)
+    Dockerfile = render.os_Dockerfile(os_)
+    return build(client_url, repository, Dockerfile, os_path, {'os' : os_} , os_)
     
-def build_interpreter(interpreter, version, os, repository, client_url):
+def build_interpreter(interpreter, version, os_, repository, client_url):
     """
     Build a interpreter container based on a Dockerfile.
     """
-    tag = '%s/%s' % (os, interpreter + version)
+    tag = '%s/%s' % (os_, interpreter + version)
     interpreter_path = crane_path('build/interpreter/%s' % interpreter)
 
     save_in(os.path.join(interpreter_path, 'install.sh'), render.interpreter_install_script(interpreter))
-    Dockerfile = render.interpreter_Dockerfile(interpreter, version, os, repository)
+    Dockerfile = render.interpreter_Dockerfile(interpreter, version, os_, repository)
     return build(client_url, repository, Dockerfile, interpreter_path, locals(), tag)
 
 def build_application(interpreter
                      ,version
-                     ,os
+                     ,os_
                      ,port
                      ,application_name
                      ,launch
@@ -65,11 +65,11 @@ def build_application(interpreter
     save_in('%s/launcher.sh' % application_folder
            ,render.application_launcher_script(interpreter, launch, after_launch))
 
-    tag = '%(os)s/%(interpreter)s%(version)s/%(application_name)s' % locals()
-    Dockerfile = render.application_Dockerfile(interpreter, version, os, repository, application_name, git_url, port)
+    tag = '%(os_)s/%(interpreter)s%(version)s/%(application_name)s' % locals()
+    Dockerfile = render.application_Dockerfile(interpreter, version, os_, repository, application_name, git_url, port)
     return build(client_url, repository, Dockerfile, application_folder, locals(), tag)
 
-def build_third(os, software, root_password, user_password, repository, client_url):
+def build_third(os_, software, root_password, user_password, repository, client_url):
     """
     Build a container that host a third party software like a database for exemple
     """
@@ -80,6 +80,6 @@ def build_third(os, software, root_password, user_password, repository, client_u
     save_in('%s/launch.sh' % third_party_folder
            ,render.third_party_launch_script(software, root_password, user_password))
 
-    tag = '%(os)s/%(software)s' % locals()
-    Dockerfile = render.third_party_Dockerfile(os, software, repository, client_url)
+    tag = '%(os_)s/%(software)s' % locals()
+    Dockerfile = render.third_party_Dockerfile(os_, software, repository, client_url)
     return build(client_url, repository, Dockerfile, third_party_folder, locals(), tag)

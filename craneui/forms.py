@@ -31,9 +31,11 @@ def get_existing_database():
 
 class CreateContainerForm(forms.Form):
       application = forms.ChoiceField()
+
       third_party_software = forms.ChoiceField()
       database_name = forms.CharField()
       existing_database = forms.ChoiceField()
+
       command = forms.CharField(required=False, help_text=\
 	'Override the command binded to the image.')
       description = forms.CharField(required=False)

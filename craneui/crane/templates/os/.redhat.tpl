@@ -6,6 +6,7 @@ RUN yum clean all
 # currently the upstart RPM does not upgrade cleanly - 20130807
 RUN yum --exclude=upstart\* update -y
 RUN yum groupinstall -y "Development Tools"
+# FIXME : to many lines : must match the 42 layers ...
 RUN yum install -y libevent-devel
 RUN yum install -y openssh-clients openssh-server
 RUN yum install -y curl

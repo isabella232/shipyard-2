@@ -66,9 +66,11 @@ CMD = '/home/qa/website/%(application_name)s/launcher.sh "%(command)s"'
 def create_container(request):
     form = CreateContainerForm(request.POST)
     application = form.data.get('application')
+
     third_party_software = form.data.get('third_party_software')
     database_name = form.data.get('database_name')
     existing_database = form.data.get('existing_database')
+
     environment = form.data.get('environment')
     memory = form.data.get('memory', 0)
     volume = form.data.get('volume')
@@ -98,20 +100,18 @@ def create_container(request):
        database_folder = os.path.join(HOST_DATABASE_FOLDER, third_party_software, application_name, database_name)
        if not os.path.exists(database_folder):
           os.makedirs(database_folder)
+       binds = {database_folder : CONTAINER_DATABASE_FOLDER}
+    else:
+       binds = {}
     
     if not hosts:
        messages.add_message(request, messages.ERROR, _('No hosts selected'))
        return redirect('craneui.views.index')
 
-   # FIXME: volume = {'/home/qa/databases' : {}}
     if environment.strip() == '':
        environment = None
-       if third_party_software:
-          environment = ['DATA_DIRECTORY=' + CONTAINER_DATABASE_FOLDER]
     else:
        environment = environment.split()
-       if third_party_software:
-          environment += ['DATA_DIRECTORY=' + CONTAINER_DATABASE_FOLDER]
     # build volumes
     if volume == '':
        volume = None
@@ -124,20 +124,12 @@ def create_container(request):
        memory = int(memory) * 1048576
     status = False
     user = request.user if private else None
+       
     for i in hosts:
         host = Host.objects.get(id=i)
-	
-# APPLICATION
-        c_id, status = host.create_container(application, command, [],
-            environment=environment, memory=memory,
-            description=description, volumes=volume,
-            volumes_from=volumes_from, privileged=privileged, owner=user)
-	print c_id
-	if third_party_software:
-           third_party_software = host.hostname + '/' + 'ubuntu/' + third_party_software # FIXME : Hard coded os
-# DATABASE
-           t_id, t_status = models.create_container(host
-                                       ,third_party_software
+        c_id, status = models.create_container(host
+                                       ,application
+			               ,command
                                        ,environment=environment
                                        ,memory=memory
                                        ,description=description
@@ -146,9 +138,7 @@ def create_container(request):
                                        ,privileged=bool(privileged)
                                        ,owner=request.user
                                         if private else None
-				       ,binds={database_folder
-					      :CONTAINER_DATABASE_FOLDER})
-	   # FIXME :add third_party software flash message
+				       ,binds=binds)
         if status:
            messages.add_message(request, messages.INFO,
                               _('Created ') + application +
