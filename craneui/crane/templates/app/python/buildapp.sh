@@ -8,3 +8,5 @@ pip install -r requirements.txt
 
 # From here, do what you want to configure your app or anything else
 {{before_launch}}
+
+echo '---------------------------------- APP BUILD FINISHED'

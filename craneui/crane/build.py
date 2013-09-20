@@ -56,7 +56,7 @@ def build_application(interpreter
     """
     application_folder = crane_path('build/app/%s/%s' % (interpreter, application_name))
     if not os.path.exists(application_folder):
-       makedirs(application_folder, 0755)
+       os.makedirs(application_folder, 0755)
 
     save_in('%s/buildapp.sh' % application_folder
            ,render.application_install_script(interpreter, application_name, before_launch))
@@ -64,6 +64,9 @@ def build_application(interpreter
            ,render.application_launch_script(interpreter, launch, after_launch))
     save_in('%s/launcher.sh' % application_folder
            ,render.application_launcher_script(interpreter, launch, after_launch))
+    # FIXME : split containers
+    save_in('%s/sql_launcher.sh' % application_folder
+           ,render.sql_launcher_script())
 
     tag = '%(os_)s/%(interpreter)s%(version)s/%(application_name)s' % locals()
     Dockerfile = render.application_Dockerfile(interpreter, version, os_, repository, application_name, git_url, port)
@@ -75,7 +78,7 @@ def build_third(os_, software, root_password, user_password, repository, client_
     """
     third_party_folder = crane_path('build/third_party/%s' % software)
     if not os.path.exists(third_party_folder):
-       makedirs(third_party_folder, 0755)
+       os.makedirs(third_party_folder, 0755)
     
     save_in('%s/launch.sh' % third_party_folder
            ,render.third_party_launch_script(software, root_password, user_password))

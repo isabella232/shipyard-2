@@ -32,19 +32,9 @@ def get_existing_database():
 class CreateContainerForm(forms.Form):
       application = forms.ChoiceField()
 
-      third_party_software = forms.ChoiceField()
-      database_name = forms.CharField()
-      existing_database = forms.ChoiceField()
-
       command = forms.CharField(required=False, help_text=\
 	'Override the command binded to the image.')
       description = forms.CharField(required=False)
-      memory = forms.CharField(required=False, help_text='Memory in MB')
-      environment = forms.CharField(required=False,
-        help_text='key=value space separated pairs')
-      volume = forms.CharField(required=False, help_text='container volume (i.e. /mnt/volume)')
-      volumes_from = forms.CharField(required=False,
-        help_text='mount volumes from specified container')
       hosts = forms.MultipleChoiceField()
       private = forms.BooleanField()
       privileged = forms.BooleanField()
@@ -56,9 +46,6 @@ class CreateContainerForm(forms.Form):
          self.helper.form_class = 'form-horizontal'
          self.helper.form_action = reverse('craneui.views.create_container')
          self.helper.help_text_inline = True
-         self.fields['third_party_software'].choices =\
-                    [('', '----------')] + list_third_party_softwares()
-         self.fields['existing_database'].choices = [('', '----------')]
          self.fields['application'].choices = [('', '----------')] + \
              [x for x in get_application_images()]
          self.fields['hosts'].choices = \

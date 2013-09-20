@@ -53,7 +53,7 @@ def interpreter_install_script(interpreter):
     """
     return render_template__('interpreter/%s/install.sh' % interpreter, **{}) # No need for variables here
 
-def application_install_script(interpreter, application_name, configuration):
+def application_install_script(interpreter, application_name, before_launch):
     """
     Render the script that install the app into the container. 
     """
@@ -71,6 +71,13 @@ def application_launcher_script(interpreter, launch, after_launch):
     Render the script that will be use when the application container is launched.
     """
     return render_template__('app/launcher.sh', **locals())
+
+# FIXME : split app and sql container
+def sql_launcher_script():
+    """
+    Render the script that will be use when the application container is launched.
+    """
+    return render_template__('app/sql_launcher.sh', **{})
 
 def third_party_launch_script(software, root_password, user_password):
     """

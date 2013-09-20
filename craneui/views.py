@@ -67,14 +67,6 @@ def create_container(request):
     form = CreateContainerForm(request.POST)
     application = form.data.get('application')
 
-    third_party_software = form.data.get('third_party_software')
-    database_name = form.data.get('database_name')
-    existing_database = form.data.get('existing_database')
-
-    environment = form.data.get('environment')
-    memory = form.data.get('memory', 0)
-    volume = form.data.get('volume')
-    volumes_from = form.data.get('volumes_from')
     hosts = form.data.getlist('hosts')
     private = form.data.get('private')
     privileged = form.data.get('privileged')
@@ -89,39 +81,10 @@ def create_container(request):
        command = CMD % (locals())
        print command
 
-    if third_party_software:
-       application_name = application.split('/')[3].split(':')[0]
-       if existing_database:
-          database_name = existing_database
-       elif not database_name:
-          messages.add_message(request, messages.ERROR, _('No database selected'))
-          return redirect('craneui.views.index')
- 
-       database_folder = os.path.join(HOST_DATABASE_FOLDER, third_party_software, application_name, database_name)
-       if not os.path.exists(database_folder):
-          os.makedirs(database_folder)
-       binds = {database_folder : CONTAINER_DATABASE_FOLDER}
-    else:
-       binds = {}
-    
     if not hosts:
        messages.add_message(request, messages.ERROR, _('No hosts selected'))
        return redirect('craneui.views.index')
 
-    if environment.strip() == '':
-       environment = None
-    else:
-       environment = environment.split()
-    # build volumes
-    if volume == '':
-       volume = None
-    else:
-       volume = { volume : {}}
-    # convert memory from MB to bytes
-    if memory.strip() == '':
-       memory = 0
-    else:
-       memory = int(memory) * 1048576
     status = False
     user = request.user if private else None
        
@@ -130,15 +93,15 @@ def create_container(request):
         c_id, status = models.create_container(host
                                        ,application
 			               ,command
-                                       ,environment=environment
-                                       ,memory=memory
+                                       ,environment=None
+                                       ,memory=0
                                        ,description=description
-                                       ,volumes={CONTAINER_DATABASE_FOLDER: {}}
-                                       ,volumes_from=volumes_from
+                                       ,volumes=None
+                                       ,volumes_from=None
                                        ,privileged=bool(privileged)
                                        ,owner=request.user
                                         if private else None
-				       ,binds=binds)
+				       ,binds={})
         if status:
            messages.add_message(request, messages.INFO,
                               _('Created ') + application +
@@ -217,7 +180,8 @@ def build_application(request):
     elif git_url:
        application_name = git_url.split('/')[-1].split('.')[0]
     else:
-       pass # FIXME add error
+       messages.add_message(request, messages.ERROR, _('No application given'))
+       return redirect('craneui.views.index')
 
     args = (interpreter, version, os, port, application_name, launch, after_launch, before_launch, git_url)
     build_on_hosts(crane.build.build_application, args, hosts, request,

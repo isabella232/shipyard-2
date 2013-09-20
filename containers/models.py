@@ -41,7 +41,7 @@ class Host(models.Model):
         url ='{0}:{1}'.format(self.hostname, self.port)
         if not url.startswith('http'):
             url = 'http://{0}'.format(url)
-        return client.Client(base_url=url, version="1.3")
+        return client.Client(base_url=url)
 
     def _invalidate_container_cache(self):
         # invalidate cache
@@ -63,7 +63,7 @@ class Host(models.Model):
 
     def get_containers(self, show_all=False):
         c = client.Client(base_url='http://{0}:{1}'.format(self.hostname,
-            self.port), version="1.3")
+            self.port))
         key = self._generate_container_cache_key(show_all)
         containers = cache.get(key)
         container_ids = []
@@ -98,7 +98,7 @@ class Host(models.Model):
 
     def get_images(self, show_all=False):
         c = client.Client(base_url='http://{0}:{1}'.format(self.hostname,
-            self.port), version="1.3")
+            self.port))
         key = IMAGE_KEY.format(self.name)
         images = cache.get(key)
         if images is None:
