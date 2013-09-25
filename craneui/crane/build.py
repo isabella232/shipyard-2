@@ -11,7 +11,7 @@ def build(client_url, repository, result, build_path, variables, tag):
     """
     Prepare and build a container based on a Dockerfile.
     """
-    docker_client = client.Client(base_url=client_url, version="1.3")
+    docker_client = client.Client(base_url=client_url)
     print "Building : '%s/%s'" % (repository, tag)
     save_in('%s/Dockerfile' % build_path, result)
     match, log = docker_client.build(path=build_path)

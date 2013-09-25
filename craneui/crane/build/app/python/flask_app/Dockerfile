@@ -1,8 +1,6 @@
 FROM 127.0.0.1/ubuntu/python2.7.5
 
 
-RUN sudo apt-get install -y mysql-server libmysqlclient-dev sqlite3 libsqlite3-dev
-
 EXPOSE 3306
 
 ADD . /home/qa/website
