@@ -36,8 +36,6 @@ class CreateContainerForm(forms.Form):
 	'Override the command binded to the image.')
       description = forms.CharField(required=False)
       hosts = forms.MultipleChoiceField()
-      private = forms.BooleanField()
-      privileged = forms.BooleanField()
 
       def __init__(self, *args, **kwargs):
          super(CreateContainerForm, self).__init__(*args, **kwargs)
@@ -93,7 +91,8 @@ class ApplicationBuildForm(forms.Form):
       interpreter = forms.ChoiceField(choices=interpreters)
       version = forms.ChoiceField(choices=versions, label=None)
       application = forms.FileField('application')
-      git_url = forms.CharField()
+      git_url = forms.CharField(help_text=' ')
+      database_name = forms.CharField(help_text=' ')
       port = forms.CharField(initial=5000)
       launch = forms.CharField(initial="%s app.%s" % (interpreter_name, extension))
       after_launch = forms.CharField(initial="siege --concurrent 2 --delay 1 -f urls.txt", required = False)
@@ -122,6 +121,7 @@ class ApplicationBuildForm(forms.Form):
                'application',
                'git_url',
                'port',
+               'database_name',
                'before_launch',
                'launch',
                'after_launch',

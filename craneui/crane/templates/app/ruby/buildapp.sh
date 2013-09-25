@@ -1,6 +1,9 @@
 #!/bin/bash
+
 cd `dirname "$0"`;
 cd {{application_name}};
+
+source /etc/profile.d/rbenv.sh;
 
 rbenv rehash;
 bundle install

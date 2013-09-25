@@ -31,7 +31,6 @@ def create_container(host
        c, created = Container.objects.get_or_create(container_id=c_id,
                                                     host=host)
        c.description = description
-       c.owner = owner
        c.save()
        status = True
        # clear host cache

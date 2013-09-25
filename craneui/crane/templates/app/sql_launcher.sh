@@ -6,13 +6,16 @@ echo '------------------------------ MYSQLD LAUNCHED'
 sleep 5;
 
 mysql --user=root --execute=\
-" UPDATE mysql.user SET Password = PASSWORD('toor')
+" UPDATE mysql.user SET Password = PASSWORD('')
      WHERE User = 'root';
  FLUSH PRIVILEGES;
 ";
 
-mysql --user=root --password="toor" --execute="CREATE DATABASE test;";
-mysql --user=root --password="toor" --execute="DROP USER ''@'localhost';";
-mysql --user=root --password="toor" --execute="CREATE USER 'qa'@'%' IDENTIFIED BY 'aq';"
-mysql --user=root --password="toor" --execute="GRANT ALL PRIVILEGES ON *.* TO 'qa'@'%' IDENTIFIED BY 'aq';"
+mysql --user=root --password="" --execute="DROP USER ''@'localhost';";
+mysql --user=root --password="" --execute="CREATE USER 'qa'@'%' IDENTIFIED BY '';"
+mysql --user=root --password="" --execute="GRANT ALL PRIVILEGES ON *.* TO 'qa'@'%' IDENTIFIED BY '';"
+{% if database_name %}
+echo 'CREATE DATABASE {{database_name}}'
+mysql --user=root --password="" --execute="CREATE DATABASE {{database_name}};";
+{% endif %}
 echo '------------------------------ MYSQLD CONFIGURED'

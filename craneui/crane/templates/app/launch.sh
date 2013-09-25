@@ -17,6 +17,8 @@ function concatenate_args
     echo "$string"
 }
 
+env;
+
 cd `dirname "$0"`;
 {{env_manager}};
 

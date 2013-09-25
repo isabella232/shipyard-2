@@ -1,17 +1,35 @@
 #!/bin/bash
 
-# Launch sshd
-/usr/sbin/sshd;
+# This function is used to concatenate the parameters.
+# Due to docker py limitations we cannot pass them as one string
+# to the shell and eval it.
+function concatenate_args
+{
+    string=""
+    for a in "$@" # Loop over arguments
+    do
+        if [[ "$string" != "" ]]
+        then
+            string+=" " # Delimeter
+        fi
+        string+="$a"
+    done
+    echo "$string"
+}
+
+env;
 
 cd `dirname "$0"`;
-rbenv rehash;
+source /etc/profile.d/rbenv.sh && rbenv rehash;
 
-# Launch the app in background
+command="$(concatenate_args "$@")";
 
-ruby app.rb &
+if [ $# -eq 0 ]  || [[ $# -gt 0  &&  -z "$command" ]]
+then
+	# Launch the app in background
+	ruby app.rb &
+else
+	eval "$command" &
+fi
 
 # After launch
-
-while true; do
-    sleep 60;
-done

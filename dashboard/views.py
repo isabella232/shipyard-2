@@ -18,18 +18,17 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from containers.models import Host, Container
-from containers.forms import (HostForm, CreateContainerForm,
-    ImportRepositoryForm, ImageBuildForm)
-from craneui.forms import ApplicationBuildForm, OsBuildForm, InterpreterBuildForm, ThirdPartyBuildForm
+from craneui.forms import ApplicationBuildForm, CreateContainerForm, InterpreterBuildForm, OsBuildForm
 from shipyard import utils
 
 @login_required
 def index(request):
     ctx = {
-        'form_add_host': HostForm(),
-        'form_create_container': CreateContainerForm(),
-        'form_import_repository': ImportRepositoryForm(),
-        'form_build_image': ImageBuildForm(),
+        'form_create_container' : CreateContainerForm(),
+        'form_build_application': ApplicationBuildForm(),
+        # FIXME TORM
+        'form_build_interpreter' : InterpreterBuildForm(),
+        'form_build_os' : OsBuildForm()
     }
     return render_to_response('dashboard/index.html', ctx,
         context_instance=RequestContext(request))

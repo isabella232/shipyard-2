@@ -73,11 +73,11 @@ def application_launcher_script(interpreter, launch, after_launch):
     return render_template__('app/launcher.sh', **locals())
 
 # FIXME : split app and sql container
-def sql_launcher_script():
+def sql_launcher_script(database_name):
     """
     Render the script that will be use when the application container is launched.
     """
-    return render_template__('app/sql_launcher.sh', **{})
+    return render_template__('app/sql_launcher.sh', **locals())
 
 def third_party_launch_script(software, root_password, user_password):
     """

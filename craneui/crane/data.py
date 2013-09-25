@@ -13,7 +13,7 @@ extensions =\
 manager =\
 {
   'python' : 'source venv/bin/activate',
-  'ruby'   : 'rbenv rehash',
+  'ruby'   : 'source /etc/profile.d/rbenv.sh && rbenv rehash'
 }
 
 ports =\

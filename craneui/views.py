@@ -68,8 +68,6 @@ def create_container(request):
     application = form.data.get('application')
 
     hosts = form.data.getlist('hosts')
-    private = form.data.get('private')
-    privileged = form.data.get('privileged')
     description = form.data.get('description')
     command = form.data.get('command')
 
@@ -83,24 +81,22 @@ def create_container(request):
 
     if not hosts:
        messages.add_message(request, messages.ERROR, _('No hosts selected'))
-       return redirect('craneui.views.index')
+       return redirect(reverse('dashboard.views.index'))
 
     status = False
-    user = request.user if private else None
        
     for i in hosts:
         host = Host.objects.get(id=i)
         c_id, status = models.create_container(host
                                        ,application
-			               ,command
+			                           ,command
                                        ,environment=None
                                        ,memory=0
                                        ,description=description
                                        ,volumes=None
                                        ,volumes_from=None
-                                       ,privileged=bool(privileged)
-                                       ,owner=request.user
-                                        if private else None
+                                       ,privileged=False
+                                       ,owner=''
 				       ,binds={})
         if status:
            messages.add_message(request, messages.INFO,
@@ -110,7 +106,7 @@ def create_container(request):
            messages.add_message(request, messages.ERROR,
                               _('Container failed to start') +
                               _(' on ' + host.hostname))
-    return redirect('craneui.views.index')
+    return redirect(reverse('dashboard.views.index'))
 
 @require_http_methods(['POST'])
 @login_required
@@ -125,7 +121,7 @@ def build_os(request):
     args = (os,)
     build_on_hosts(crane.build.build_os, args, hosts, request,
                  _('Building %s image.  This may take a few minutes.' % os))
-    return redirect(reverse('craneui.views.index'))
+    return redirect(reverse('dashboard.views.index'))
 
 @require_http_methods(['POST'])
 @login_required
@@ -143,7 +139,7 @@ def build_interpreter(request):
     build_on_hosts(crane.build.build_interpreter, args, hosts, request,
                _('Building %s/%s%s image.  This may take a few minutes.'
                %(os, interpreter, version)))
-    return redirect(reverse('craneui.views.index'))
+    return redirect(reverse('dashboard.views.index'))
 
 def handle_upload(interpreter, application_archive, archive_name, application_name):
     application_folder = crane_path('build/app/%s/%s' % (interpreter, application_name))
@@ -166,9 +162,10 @@ def build_application(request):
     interpreter = form.data.get('interpreter')
     version = form.data.get('version')
     port = form.data.get('port')
+    database_name = form.data.get('database_name')
     launch = form.data.get('launch')
     before_launch = form.data.get('before_launch')
-    after_launch = form.data.get('after_lauch')
+    after_launch = form.data.get('after_launch')
     hosts = form.data.getlist('hosts')
     archive = request.FILES.get('application')
     git_url = form.data.get('git_url')
@@ -181,13 +178,13 @@ def build_application(request):
        application_name = git_url.split('/')[-1].split('.')[0]
     else:
        messages.add_message(request, messages.ERROR, _('No application given'))
-       return redirect('craneui.views.index')
+       return redirect(reverse('dashboard.views.index'))
 
-    args = (interpreter, version, os, port, application_name, launch, after_launch, before_launch, git_url)
+    args = (interpreter, version, os, port, application_name, launch, after_launch, before_launch, database_name, git_url)
     build_on_hosts(crane.build.build_application, args, hosts, request,
                _('Building %s/%s%s/%s image.  This may take a few minutes.'
                %(os, interpreter, version, application_name)))
-    return redirect(reverse('craneui.views.index'))
+    return redirect(reverse('dashboard.views.index'))
 
 @require_http_methods(['POST'])
 @login_required
@@ -205,7 +202,7 @@ def build_third(request):
     build_on_hosts(crane.build.build_third, args, hosts, request,
                  _('Building %s image.  This may take a few minutes.'
                  % software))
-    return redirect(reverse('craneui.views.index'))
+    return redirect(reverse('dashboard.views.index'))
 
 def versions(request):
     return HttpResponse(

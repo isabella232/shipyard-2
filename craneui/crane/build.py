@@ -48,6 +48,7 @@ def build_application(interpreter
                      ,launch
                      ,after_launch
                      ,before_launch
+                     ,database_name
                      ,git_url
                      ,repository
                      ,client_url):
@@ -66,7 +67,7 @@ def build_application(interpreter
            ,render.application_launcher_script(interpreter, launch, after_launch))
     # FIXME : split containers
     save_in('%s/sql_launcher.sh' % application_folder
-           ,render.sql_launcher_script())
+           ,render.sql_launcher_script(database_name))
 
     tag = '%(os_)s/%(interpreter)s%(version)s/%(application_name)s' % locals()
     Dockerfile = render.application_Dockerfile(interpreter, version, os_, repository, application_name, git_url, port)
