@@ -32,7 +32,7 @@ def container_uptime(value):
         try:
             tz = value.split('.')[-1]
             ts = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.' + tz)
-            return datetime.utcnow().replace(microsecond=0) - ts
+            return datetime.now().replace(microsecond=0) - ts
         except:
             return ''
     return value

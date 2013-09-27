@@ -187,8 +187,7 @@ def search_repository(request):
     hosts = Host.objects.filter(enabled=True)
     rnd = random.randint(0, len(hosts)-1)
     host = hosts[rnd]
-    url = 'http://{0}:{1}'.format(host.hostname, host.port)
-    c = client.Client(url)
+    c = host._get_client()
     data = c.search(query)
     return HttpResponse(json.dumps(data), content_type='application/json')
 

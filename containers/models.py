@@ -38,10 +38,7 @@ class Host(models.Model):
         return self.name
 
     def _get_client(self):
-        url ='{0}:{1}'.format(self.hostname, self.port)
-        if not url.startswith('http'):
-            url = 'http://{0}'.format(url)
-        return client.Client(base_url=url)
+        return client.Client()
 
     def _invalidate_container_cache(self):
         # invalidate cache
@@ -62,8 +59,7 @@ class Host(models.Model):
         self._invalidate_image_cache()
 
     def get_containers(self, show_all=False):
-        c = client.Client(base_url='http://{0}:{1}'.format(self.hostname,
-            self.port))
+	c = self._get_client()
         key = self._generate_container_cache_key(show_all)
         containers = cache.get(key)
         container_ids = []
@@ -80,6 +76,8 @@ class Host(models.Model):
                 meta = c.inspect_container(c_id)
                 m, created = Container.objects.get_or_create(
                     container_id=c_id, host=self)
+		from pprint import pprint
+		pprint(json.dumps(meta))
                 m.meta = json.dumps(meta)
                 m.save()
                 container_ids.append(c_id)
@@ -97,8 +95,7 @@ class Host(models.Model):
         return [x for x in containers if x.get('Id') in ids]
 
     def get_images(self, show_all=False):
-        c = client.Client(base_url='http://{0}:{1}'.format(self.hostname,
-            self.port))
+	c = self._get_client()
         key = IMAGE_KEY.format(self.name)
         images = cache.get(key)
         if images is None:
